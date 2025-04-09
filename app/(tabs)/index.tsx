@@ -1,24 +1,28 @@
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Stack } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function HomeScreen() {
+  const backgroundColor = useThemeColor({}, 'background');
+  const iconColor = useThemeColor({}, 'icon');
+
   return (
-    <>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <Stack.Screen options={{ headerShown: true, title: 'Lango' }} />
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.header}>
-          <MaterialIcons name="translate" size={48} color="#4CAF50" style={styles.headerIcon} />
+          <MaterialIcons name="translate" size={48} color={iconColor} style={styles.headerIcon} />
           <ThemedText type="title">Welcome to Lango!</ThemedText>
           <ThemedText>Your personal language learning assistant</ThemedText>
         </ThemedView>
         
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="flag" size={24} color="#4CAF50" />
+            <MaterialIcons name="flag" size={24} color={iconColor} />
             <ThemedText type="subtitle" style={styles.sectionTitle}>Daily Goal</ThemedText>
           </ThemedView>
           <ThemedView style={styles.goalContainer}>
@@ -31,12 +35,12 @@ export default function HomeScreen() {
 
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="play-circle-filled" size={24} color="#2196F3" />
+            <MaterialIcons name="play-circle-filled" size={24} color={iconColor} />
             <ThemedText type="subtitle" style={styles.sectionTitle}>Continue Learning</ThemedText>
           </ThemedView>
           <ThemedView style={styles.lessonCard}>
             <ThemedView style={styles.lessonCardHeader}>
-              <MaterialIcons name="chat" size={24} color="#2196F3" />
+              <MaterialIcons name="chat" size={24} color={iconColor} />
               <ThemedView style={styles.lessonInfo}>
                 <ThemedText type="defaultSemiBold">Basic Phrases</ThemedText>
                 <ThemedText>Lesson 3 of 10</ThemedText>
@@ -50,7 +54,7 @@ export default function HomeScreen() {
 
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="history" size={24} color="#FF9800" />
+            <MaterialIcons name="history" size={24} color={iconColor} />
             <ThemedText type="subtitle" style={styles.sectionTitle}>Recent Activity</ThemedText>
           </ThemedView>
           <ThemedView style={styles.activityItem}>
@@ -69,11 +73,14 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,

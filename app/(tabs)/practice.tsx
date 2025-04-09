@@ -1,11 +1,15 @@
-import { ScrollView, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, StyleSheet, Pressable, SafeAreaView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Stack } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function PracticeScreen() {
+  const backgroundColor = useThemeColor({}, 'background');
+  const iconColor = useThemeColor({}, 'icon');
+
   const practiceActivities = [
     { id: 1, title: 'Flashcards', description: 'Review vocabulary with flashcards', icon: 'style', color: '#FF9800' },
     { id: 2, title: 'Listening', description: 'Improve your listening skills', icon: 'headset', color: '#2196F3' },
@@ -22,9 +26,9 @@ export default function PracticeScreen() {
   ];
 
   return (
-    <>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <Stack.Screen options={{ headerShown: true, title: 'Practice' }} />
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.header}>
           <ThemedText type="title">Practice Makes Perfect!</ThemedText>
           <ThemedText>Choose an activity to improve your skills</ThemedText>
@@ -55,7 +59,7 @@ export default function PracticeScreen() {
             <ThemedView key={challenge.id} style={styles.challengeCard}>
               <ThemedView style={styles.challengeHeader}>
                 <ThemedView style={styles.challengeTitleRow}>
-                  <MaterialIcons name={challenge.icon} size={24} color="#607D8B" style={styles.challengeIcon} />
+                  <MaterialIcons name={challenge.icon} size={24} color={iconColor} style={styles.challengeIcon} />
                   <ThemedText type="defaultSemiBold">{challenge.title}</ThemedText>
                 </ThemedView>
                 <ThemedText style={[
@@ -83,11 +87,14 @@ export default function PracticeScreen() {
           </ThemedView>
         </ThemedView>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,

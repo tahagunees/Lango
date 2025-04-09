@@ -1,11 +1,15 @@
-import { ScrollView, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, StyleSheet, Pressable, SafeAreaView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Stack } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function LessonsScreen() {
+  const backgroundColor = useThemeColor({}, 'background');
+  const iconColor = useThemeColor({}, 'icon');
+
   const languages = [
     { id: 1, name: 'Spanish', progress: 45, lessons: 24, icon: 'spa' },
     { id: 2, name: 'French', progress: 20, lessons: 18, icon: 'local-cafe' },
@@ -20,16 +24,16 @@ export default function LessonsScreen() {
   ];
 
   return (
-    <>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <Stack.Screen options={{ headerShown: true, title: 'Lessons' }} />
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle">Your Languages</ThemedText>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.languageList}>
             {languages.map(language => (
               <Pressable key={language.id}>
                 <ThemedView style={styles.languageCard}>
-                  <MaterialIcons name={language.icon} size={32} color="#2196F3" style={styles.languageIcon} />
+                  <MaterialIcons name={language.icon} size={32} color={iconColor} style={styles.languageIcon} />
                   <ThemedText type="defaultSemiBold">{language.name}</ThemedText>
                   <ThemedText>{language.lessons} lessons</ThemedText>
                   <ThemedView style={styles.progressContainer}>
@@ -77,11 +81,14 @@ export default function LessonsScreen() {
           </Pressable>
         </ThemedView>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,

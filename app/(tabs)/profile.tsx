@@ -1,11 +1,16 @@
-import { ScrollView, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, StyleSheet, Pressable, SafeAreaView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function ProfileScreen() {
+  const backgroundColor = useThemeColor({}, 'background');
+  const iconColor = useThemeColor({}, 'icon');
+  const router = useRouter();
+
   const stats = [
     { id: 1, title: 'Total XP', value: '2,540', icon: '🏆' },
     { id: 2, title: 'Learning', value: '3 Languages', icon: '🌎' },
@@ -28,10 +33,16 @@ export default function ProfileScreen() {
     { id: 3, title: 'Grammar Expert', description: 'Complete all grammar lessons', progress: 45 },
   ];
 
+  const handleLogout = () => {
+    // Burada Firebase Auth çıkış işlemi eklenebilir
+    // Şimdilik doğrudan login sayfasına yönlendiriyoruz
+    router.replace('/auth/login');
+  };
+
   return (
-    <>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <Stack.Screen options={{ headerShown: true, title: 'Profile' }} />
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.profileHeader}>
           <ThemedView style={styles.profilePicture}>
             <ThemedText style={styles.profileInitials}>JD</ThemedText>
@@ -76,7 +87,7 @@ export default function ProfileScreen() {
             <Pressable key={setting.id}>
               <ThemedView style={styles.settingItem}>
                 <ThemedView style={styles.settingIcon}>
-                  <MaterialIcons name={setting.icon} size={24} color="#4CAF50" />
+                  <MaterialIcons name={setting.icon} size={24} color={iconColor} />
                 </ThemedView>
                 <ThemedText>{setting.title}</ThemedText>
               </ThemedView>
@@ -84,18 +95,21 @@ export default function ProfileScreen() {
           ))}
         </ThemedView>
 
-        <Pressable>
+        <Pressable onPress={handleLogout}>
           <ThemedView style={styles.logoutButton}>
             <MaterialIcons name="exit-to-app" size={20} color="white" style={styles.logoutIcon} />
             <ThemedText style={styles.logoutText}>Logout</ThemedText>
           </ThemedView>
         </Pressable>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,
