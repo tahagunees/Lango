@@ -8,13 +8,27 @@ import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
 import { AuthProvider } from '@/context/AuthContext';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { ThemeProvider as LangoThemeProvider, useTheme } from '@/context/ThemeContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+function Navigation() {
+  const { currentTheme } = useTheme();
+  
+  return (
+    <ThemeProvider value={currentTheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="auth" />
+        <Stack.Screen name="+not-found" options={{ headerShown: true }} />
+      </Stack>
+      <StatusBar style={currentTheme === 'dark' ? 'light' : 'dark'} />
+    </ThemeProvider>
+  );
+}
+
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -30,15 +44,10 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="auth" />
-          <Stack.Screen name="+not-found" options={{ headerShown: true }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AuthProvider>
+    <LangoThemeProvider>
+      <AuthProvider>
+        <Navigation />
+      </AuthProvider>
+    </LangoThemeProvider>
   );
 }

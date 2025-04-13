@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTheme } from '@/context/ThemeContext';
 import Animated, { useAnimatedStyle, withTiming, interpolate, useSharedValue } from 'react-native-reanimated';
 
 export interface VocabularyWord {
@@ -32,6 +33,9 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({ word, onMarkLear
   const flip = useSharedValue(0);
   const iconColor = useThemeColor({}, 'icon');
   const backgroundColor = useThemeColor({}, 'background');
+  const { theme } = useTheme();
+  const cardBackgroundColor = theme === 'dark' ? '#1E1E1E' : '#F5F5F5';
+  const textSecondaryColor = theme === 'dark' ? '#AAAAAA' : '#757575';
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -79,7 +83,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({ word, onMarkLear
   return (
     <ThemedView style={styles.container}>
       <TouchableOpacity activeOpacity={0.9} onPress={handleFlip} style={styles.cardContainer}>
-        <Animated.View style={[styles.card, frontAnimatedStyle]}>
+        <Animated.View style={[styles.card, frontAnimatedStyle, { backgroundColor: cardBackgroundColor }]}>
           <ThemedView style={styles.difficultyBadge}>
             <ThemedView 
               style={[
@@ -87,7 +91,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({ word, onMarkLear
                 { backgroundColor: getDifficultyColor(word.difficulty) }
               ]} 
             />
-            <ThemedText style={styles.difficultyText}>
+            <ThemedText style={[styles.difficultyText, { color: textSecondaryColor }]}>
               {word.difficulty === 'easy' ? 'Kolay' : 
                word.difficulty === 'medium' ? 'Orta' : 'Zor'}
             </ThemedText>
@@ -97,13 +101,13 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({ word, onMarkLear
             {word.word}
           </ThemedText>
           
-          <ThemedText style={styles.pronunciation}>
+          <ThemedText style={[styles.pronunciation, { color: textSecondaryColor }]}>
             {word.pronunciation}
           </ThemedText>
           
           <ThemedView style={styles.tagsContainer}>
             {word.tags.map((tag, index) => (
-              <ThemedView key={index} style={styles.tag}>
+              <ThemedView key={index} style={[styles.tag, { backgroundColor: theme === 'dark' ? 'rgba(33, 150, 243, 0.2)' : 'rgba(33, 150, 243, 0.1)' }]}>
                 <ThemedText style={styles.tagText}>{tag}</ThemedText>
               </ThemedView>
             ))}
@@ -111,7 +115,7 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({ word, onMarkLear
           
           <ThemedView style={styles.hint}>
             <MaterialIcons name="touch-app" size={20} color={iconColor} />
-            <ThemedText style={styles.hintText}>Çeviri için dokun</ThemedText>
+            <ThemedText style={[styles.hintText, { color: textSecondaryColor }]}>Çeviri için dokun</ThemedText>
           </ThemedView>
         </Animated.View>
         
@@ -121,16 +125,16 @@ export const VocabularyCard: React.FC<VocabularyCardProps> = ({ word, onMarkLear
           </ThemedText>
           
           <ThemedView style={styles.exampleContainer}>
-            <ThemedText style={styles.exampleTitle}>Örnek:</ThemedText>
+            <ThemedText style={[styles.exampleTitle, { color: textSecondaryColor }]}>Örnek:</ThemedText>
             <ThemedText style={styles.example}>{word.example}</ThemedText>
-            <ThemedText style={styles.exampleTranslation}>
+            <ThemedText style={[styles.exampleTranslation, { color: textSecondaryColor }]}>
               {word.exampleTranslation}
             </ThemedText>
           </ThemedView>
           
           <ThemedView style={styles.hint}>
             <MaterialIcons name="touch-app" size={20} color={iconColor} />
-            <ThemedText style={styles.hintText}>Kelimeyi görmek için dokun</ThemedText>
+            <ThemedText style={[styles.hintText, { color: textSecondaryColor }]}>Kelimeyi görmek için dokun</ThemedText>
           </ThemedView>
         </Animated.View>
       </TouchableOpacity>
@@ -169,15 +173,14 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: width - 48,
-    height: 320,
-    perspective: 1000,
+    height: 280,
+    perspective: '1000' as any,
   },
   card: {
     width: '100%',
     height: '100%',
     padding: 24,
     borderRadius: 16,
-    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -201,7 +204,6 @@ const styles = StyleSheet.create({
   },
   difficultyText: {
     fontSize: 12,
-    color: '#757575',
   },
   word: {
     marginBottom: 8,
@@ -209,7 +211,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   pronunciation: {
-    color: '#757575',
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -220,7 +221,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   tag: {
-    backgroundColor: 'rgba(33, 150, 243, 0.1)',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 16,
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
   },
   hintText: {
     marginLeft: 4,
-    color: '#757575',
     fontSize: 12,
   },
   translation: {
@@ -249,33 +248,32 @@ const styles = StyleSheet.create({
   exampleContainer: {
     width: '100%',
     padding: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: 8,
-    marginBottom: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
   },
   exampleTitle: {
-    fontWeight: 'bold',
     marginBottom: 8,
+    fontWeight: 'bold',
   },
   example: {
-    fontStyle: 'italic',
     marginBottom: 8,
+    fontStyle: 'italic',
   },
   exampleTranslation: {
-    color: '#757575',
+    fontStyle: 'italic',
   },
   actionsContainer: {
     flexDirection: 'row',
     marginTop: 16,
-    width: '100%',
-    justifyContent: 'space-around',
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginHorizontal: 8,
   },
   actionText: {
-    marginLeft: 8,
+    marginLeft: 4,
   },
 }); 

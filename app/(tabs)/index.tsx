@@ -7,10 +7,14 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { DrawerToggleButton } from '@/components/DrawerToggleButton';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
+  const { theme } = useTheme();
+  const cardBackgroundColor = theme === 'dark' ? '#1E1E1E' : '#FFFFFF';
+  const secondaryBackgroundColor = theme === 'dark' ? '#2C2C2C' : '#F5F5F5';
   const { user, userProfile } = useAuth();
   const [dailyGoal, setDailyGoal] = useState(10); // Günlük hedef dakika
   const [dailyProgress, setDailyProgress] = useState(4); // Bugün çalışılan dakika
@@ -82,8 +86,8 @@ export default function HomeScreen() {
           <ThemedText>Bugün dil öğrenmeye devam edelim!</ThemedText>
         </ThemedView>
 
-        <ThemedView style={styles.dailyGoalCard}>
-          <ThemedView style={styles.dailyGoalHeader}>
+        <ThemedView style={[styles.dailyGoalCard, { backgroundColor: cardBackgroundColor }]}>
+          <ThemedView style={[styles.dailyGoalHeader, { backgroundColor: cardBackgroundColor }]}>
             <ThemedText type="subtitle">Günlük Hedef</ThemedText>
             <ThemedView style={styles.streakContainer}>
               <MaterialIcons name="local-fire-department" size={20} color="#FF9800" />
@@ -91,7 +95,7 @@ export default function HomeScreen() {
             </ThemedView>
           </ThemedView>
 
-          <ThemedView style={styles.progressContainer}>
+          <ThemedView style={[styles.progressContainer, { backgroundColor: cardBackgroundColor }]}>
             <ThemedView style={styles.progressBarContainer}>
               <ThemedView 
                 style={[styles.progressBar, { width: `${dailyProgressPercentage}%` }]} 
@@ -119,7 +123,7 @@ export default function HomeScreen() {
             {suggestions.map(suggestion => (
               <TouchableOpacity 
                 key={suggestion.id} 
-                style={styles.suggestionCard}
+                style={[styles.suggestionCard, { backgroundColor: cardBackgroundColor }]}
                 onPress={suggestion.action}
               >
                 <ThemedView 
@@ -143,10 +147,10 @@ export default function HomeScreen() {
           {recentActivities.map(activity => (
             <TouchableOpacity 
               key={activity.id} 
-              style={styles.activityCard}
+              style={[styles.activityCard, { backgroundColor: cardBackgroundColor }]}
               onPress={() => handleActivityPress(activity.id)}
             >
-              <ThemedView style={styles.activityIconContainer}>
+              <ThemedView style={[styles.activityIconContainer, { backgroundColor: secondaryBackgroundColor }]}>
                 {activity.type === 'lesson' && (
                   <MaterialIcons name="menu-book" size={24} color="#4CAF50" />
                 )}
@@ -170,7 +174,7 @@ export default function HomeScreen() {
 
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle">Dil Öğrenme İpucu</ThemedText>
-          <ThemedView style={styles.tipCard}>
+          <ThemedView style={[styles.tipCard, { backgroundColor: cardBackgroundColor }]}>
             <ThemedView style={styles.tipHeader}>
               <MaterialIcons name="lightbulb" size={24} color="#FFC107" />
               <ThemedText type="defaultSemiBold" style={styles.tipTitle}>
@@ -201,7 +205,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   dailyGoalCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -273,7 +276,6 @@ const styles = StyleSheet.create({
   suggestionCard: {
     width: 200,
     padding: 16,
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginRight: 12,
     shadowColor: '#000',
@@ -300,7 +302,6 @@ const styles = StyleSheet.create({
   activityCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 12,
     marginTop: 8,
@@ -314,7 +315,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -338,7 +338,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   tipCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     marginTop: 8,

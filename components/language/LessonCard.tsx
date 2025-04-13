@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useTheme } from '@/context/ThemeContext';
 
 export interface Lesson {
   id: string;
@@ -25,6 +26,9 @@ interface LessonCardProps {
 
 export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onPress }) => {
   const iconColor = useThemeColor({}, 'icon');
+  const { theme } = useTheme();
+  const cardBackgroundColor = theme === 'dark' ? 'rgba(25, 25, 25, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+  const itemBackgroundColor = theme === 'dark' ? 'rgba(40, 40, 40, 0.6)' : 'rgba(255, 255, 255, 0.6)';
   
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -55,7 +59,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onPress }) => {
         style={styles.cardBg}
         imageStyle={styles.cardBgImage}
       >
-        <ThemedView style={styles.cardContent}>
+        <ThemedView style={[styles.cardContent, { backgroundColor: cardBackgroundColor }]}>
           <ThemedView style={styles.header}>
             <ThemedView style={[styles.levelBadge, { backgroundColor: getLevelColor(lesson.level) }]}>
               <MaterialIcons name={getLevelIcon(lesson.level)} size={12} color="#FFF" />
@@ -89,7 +93,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onPress }) => {
           
           {lesson.progress > 0 && (
             <ThemedView style={styles.progressContainer}>
-              <ThemedView style={styles.progressBar}>
+              <ThemedView style={[styles.progressBar, { backgroundColor: theme === 'dark' ? '#444' : '#E0E0E0' }]}>
                 <ThemedView style={[styles.progress, { width: `${lesson.progress}%` }]} />
               </ThemedView>
               <ThemedText style={styles.progressText}>%{lesson.progress}</ThemedText>
@@ -128,7 +132,6 @@ const styles = StyleSheet.create({
   cardContent: {
     borderRadius: 12,
     padding: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
   },
   header: {
     flexDirection: 'row',
@@ -190,7 +193,6 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: '#E0E0E0',
     borderRadius: 3,
     overflow: 'hidden',
   },

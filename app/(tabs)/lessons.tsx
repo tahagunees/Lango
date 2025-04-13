@@ -9,6 +9,7 @@ import { LessonCard, Lesson } from '@/components/language/LessonCard';
 import { GrammarQuiz, QuizQuestion } from '@/components/language/GrammarQuiz';
 import { VocabularyCard, VocabularyWord } from '@/components/language/VocabularyCard';
 import Constants from 'expo-constants';
+import { useTheme } from '@/context/ThemeContext';
 
 // VocabularyWord tipini burada tanımlayalım (component içindeki ile aynı olmalı)
 type Difficulty = 'easy' | 'medium' | 'hard';
@@ -187,6 +188,8 @@ const MOCK_VOCABULARY_DATA: Record<string, WordData[]> = {
 export default function LessonsScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const iconColor = useThemeColor({}, 'icon');
+  const { theme } = useTheme();
+  const cardBackgroundColor = theme === 'dark' ? '#1E1E1E' : '#FFFFFF';
   const [activeSection, setActiveSection] = useState<'lessons' | 'vocabulary' | 'grammar'>('lessons');
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedQuizIndex, setSelectedQuizIndex] = useState<number>(0);
@@ -399,7 +402,7 @@ export default function LessonsScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <DrawerToggleButton />
       <ScrollView style={[styles.container, { backgroundColor }]}>
-        <ThemedView style={styles.tabsContainer}>
+        <ThemedView style={[styles.tabsContainer, { backgroundColor: cardBackgroundColor }]}>
           <TouchableOpacity 
             style={[styles.tab, activeSection === 'lessons' && styles.activeTab]}
             onPress={() => setActiveSection('lessons')}
@@ -456,7 +459,7 @@ export default function LessonsScreen() {
               Gramer
             </ThemedText>
           </TouchableOpacity>
-        </ThemedView>
+                    </ThemedView>
 
         {activeSection === 'lessons' && (
           <ThemedView style={styles.sectionContainer}>
@@ -473,8 +476,8 @@ export default function LessonsScreen() {
                   onPress={handleLessonPress}
                 />
               ))}
-            </ThemedView>
-          </ThemedView>
+                  </ThemedView>
+                </ThemedView>
         )}
 
         {activeSection === 'vocabulary' && (
@@ -508,8 +511,8 @@ export default function LessonsScreen() {
                     {category.name}
                   </ThemedText>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+            ))}
+          </ScrollView>
             
             {isLoading ? (
               <ThemedView style={styles.loadingContainer}>
@@ -536,16 +539,18 @@ export default function LessonsScreen() {
                         index === selectedWordIndex && styles.activeIndicator
                       ]}
                     />
-                  ))}
+          ))}
+        </ThemedView>
+
+                <ThemedView style={{ marginTop: 20, width: '100%', alignItems: 'center' }}>
+                  <TouchableOpacity 
+                    style={[styles.nextWordButton, { zIndex: 100 }]}
+                    onPress={handleNextWord}
+                  >
+                    <ThemedText style={styles.nextWordButtonText}>Sonraki Kelime</ThemedText>
+                    <MaterialIcons name="arrow-forward" size={20} color="#FFFFFF" />
+                  </TouchableOpacity>
                 </ThemedView>
-                
-                <TouchableOpacity 
-                  style={styles.nextWordButton}
-                  onPress={handleNextWord}
-                >
-                  <ThemedText style={styles.nextWordButtonText}>Sonraki Kelime</ThemedText>
-                  <MaterialIcons name="arrow-forward" size={20} color="#FFFFFF" />
-                </TouchableOpacity>
               </>
             ) : (
               <ThemedView style={styles.noWordsContainer}>
@@ -555,7 +560,7 @@ export default function LessonsScreen() {
                 </ThemedText>
               </ThemedView>
             )}
-          </ThemedView>
+            </ThemedView>
         )}
 
         {activeSection === 'grammar' && (
@@ -570,7 +575,7 @@ export default function LessonsScreen() {
               onAnswer={handleQuizAnswer}
               onNext={handleNextQuiz}
             />
-          </ThemedView>
+        </ThemedView>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -588,7 +593,6 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 16,
     shadowColor: '#000',
@@ -691,13 +695,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#2196F3',
     borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginTop: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    marginTop: 24,
+    marginBottom: 16,
+    alignSelf: 'center',
+    width: '80%',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   nextWordButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
     marginRight: 8,
+    fontSize: 16,
   },
 }); 

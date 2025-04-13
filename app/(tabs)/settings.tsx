@@ -5,18 +5,25 @@ import React, { useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { DrawerToggleButton } from '@/components/DrawerToggleButton';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function SettingsScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const iconColor = useThemeColor({}, 'icon');
+  const { theme, setTheme } = useTheme();
   
   // Ayarlar için state değişkenleri
-  const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
   const [dailyReminder, setDailyReminder] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
+  
+  // Tema değişimini yönet
+  const handleThemeChange = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+  };
   
   // Ayarlar bölümleri
   const generalSettings = [
@@ -24,8 +31,8 @@ export default function SettingsScreen() {
       id: 'darkMode',
       title: 'Karanlık Mod',
       icon: 'dark-mode',
-      value: darkMode,
-      onToggle: () => setDarkMode(!darkMode),
+      value: theme === 'dark',
+      onToggle: handleThemeChange,
     },
     {
       id: 'notifications',
@@ -81,7 +88,7 @@ export default function SettingsScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>Genel</ThemedText>
           
           {generalSettings.map(setting => (
-            <ThemedView key={setting.id} style={styles.settingItem}>
+            <ThemedView key={setting.id} style={[styles.settingItem, { backgroundColor: theme === 'dark' ? '#2C2C2C' : '#F5F5F5' }]}>
               <View style={styles.settingLeft}>
                 <MaterialIcons name={setting.icon} size={24} color={iconColor} style={styles.settingIcon} />
                 <ThemedText>{setting.title}</ThemedText>
@@ -100,7 +107,7 @@ export default function SettingsScreen() {
           <ThemedText type="subtitle" style={styles.sectionTitle}>Öğrenme</ThemedText>
           
           {learningSettings.map(setting => (
-            <ThemedView key={setting.id} style={styles.settingItem}>
+            <ThemedView key={setting.id} style={[styles.settingItem, { backgroundColor: theme === 'dark' ? '#2C2C2C' : '#F5F5F5' }]}>
               <View style={styles.settingLeft}>
                 <MaterialIcons name={setting.icon} size={24} color={iconColor} style={styles.settingIcon} />
                 <ThemedText>{setting.title}</ThemedText>
@@ -120,7 +127,7 @@ export default function SettingsScreen() {
           
           {accountSettings.map(setting => (
             <TouchableOpacity key={setting.id} activeOpacity={0.7}>
-              <ThemedView style={styles.settingItem}>
+              <ThemedView style={[styles.settingItem, { backgroundColor: theme === 'dark' ? '#2C2C2C' : '#F5F5F5' }]}>
                 <View style={styles.settingLeft}>
                   <MaterialIcons 
                     name={setting.icon} 
@@ -141,7 +148,7 @@ export default function SettingsScreen() {
         <ThemedView style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>Hakkında</ThemedText>
           
-          <ThemedView style={styles.aboutContainer}>
+          <ThemedView style={[styles.aboutContainer, { backgroundColor: theme === 'dark' ? '#2C2C2C' : '#F5F5F5' }]}>
             <MaterialIcons name="translate" size={48} color={iconColor} style={styles.logoIcon} />
             <ThemedText type="defaultSemiBold" style={styles.appName}>Lango</ThemedText>
             <ThemedText>Sürüm 1.0.0</ThemedText>
@@ -178,7 +185,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    backgroundColor: '#F5F5F5',
     borderRadius: 12,
     marginBottom: 8,
   },
@@ -192,7 +198,6 @@ const styles = StyleSheet.create({
   aboutContainer: {
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#F5F5F5',
     borderRadius: 12,
   },
   logoIcon: {
