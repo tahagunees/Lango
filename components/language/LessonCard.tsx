@@ -51,7 +51,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onPress }) => {
       disabled={lesson.isLocked}
     >
       <ImageBackground
-        source={lesson.imageUrl ? { uri: lesson.imageUrl } : require('@/assets/images/icon.png')}
+        source={lesson.imageUrl ? { uri: lesson.imageUrl } : require('@/assets/images/lesson-default.jpg')}
         style={styles.cardBg}
         imageStyle={styles.cardBgImage}
       >
