@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const { register, googleLogin } = useAuth();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,25 +31,61 @@ export default function RegisterScreen() {
       return;
     }
 
+    // Şifre güvenliği kontrolü
+    if (password.length < 6) {
+      setError('Şifre en az 6 karakter uzunluğunda olmalıdır');
+      return;
+    }
+
     setError('');
     setLoading(true);
 
     try {
-      // Firebase auth eklendiğinde burada gerçek kayıt işlemleri yapılacak
-      // Şimdilik doğrudan ana sayfaya yönlendiriyoruz
-      setTimeout(() => {
-        setLoading(false);
-        router.replace('/(tabs)');
-      }, 1500);
-    } catch (err) {
+      // Firebase Auth ile kayıt
+      await register(email, password, fullName);
+      
+      // Başarılı kayıt, ana sayfaya yönlendir 
+      router.replace('/(tabs)');
+    } catch (err: any) {
       setLoading(false);
-      setError('Kayıt başarısız. Lütfen tekrar deneyin.');
+      setError(err.message || 'Kayıt başarısız. Lütfen tekrar deneyin.');
+    }
+  };
+
+  const handleGoogleRegister = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Google ile giriş
+      const result = await googleLogin();
+      
+      // Sonuç undefined ise, işlem başarılı olmadı demektir (mobilden iptal edilmiş olabilir)
+      if (!result) {
+        setLoading(false);
+        return;
+      }
+      
+      // Başarılı giriş, ana sayfaya yönlendir
+      router.replace('/(tabs)');
+    } catch (err: any) {
+      setLoading(false);
+      if (err.code === 'auth/invalid-credential') {
+        setError('Google hesabı ile giriş yapılamadı. Lütfen e-posta/şifre ile kayıt olun.');
+      } else {
+        setError('Google ile giriş başarısız. Lütfen tekrar deneyin.');
+      }
+      console.error('Google login error:', err);
     }
   };
 
   const handleSocialRegister = (provider: string) => {
-    // Sosyal medya kayıt (ileride Firebase ile entegre edilecek)
-    console.log(`${provider} ile kayıt yapılıyor`);
+    if (provider === 'Google') {
+      handleGoogleRegister();
+    } else {
+      // Diğer sosyal medya seçenekleri için (ileride eklenebilir)
+      console.log(`${provider} ile kayıt yapılıyor`);
+    }
   };
 
   return (
@@ -136,7 +174,10 @@ export default function RegisterScreen() {
               disabled={loading}
             >
               {loading ? (
-                <ThemedText style={styles.registerButtonText}>Kayıt yapılıyor...</ThemedText>
+                <ThemedView style={styles.loadingContainer}>
+                  <ActivityIndicator color="white" size="small" />
+                  <ThemedText style={styles.registerButtonText}> Kayıt yapılıyor...</ThemedText>
+                </ThemedView>
               ) : (
                 <ThemedText style={styles.registerButtonText}>Kayıt Ol</ThemedText>
               )}
@@ -150,19 +191,11 @@ export default function RegisterScreen() {
 
             <ThemedView style={styles.socialButtonsContainer}>
               <TouchableOpacity 
-                style={[styles.socialButton, styles.googleButton]}
+                style={styles.socialButton}
                 onPress={() => handleSocialRegister('Google')}
               >
                 <MaterialIcons name="android" size={24} color="#4285F4" />
-                <ThemedText style={styles.socialButtonText}>Google</ThemedText>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.socialButton, styles.facebookButton]}
-                onPress={() => handleSocialRegister('Facebook')}
-              >
-                <MaterialIcons name="facebook" size={24} color="#3b5998" />
-                <ThemedText style={styles.socialButtonText}>Facebook</ThemedText>
+                <ThemedText style={styles.socialButtonText}>Google ile Kayıt Ol</ThemedText>
               </TouchableOpacity>
             </ThemedView>
 
@@ -277,25 +310,21 @@ const styles = StyleSheet.create({
     color: '#757575',
   },
   socialButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 25,
+    marginBottom: 20,
   },
   socialButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
+    paddingVertical: 12,
     borderRadius: 8,
-    paddingHorizontal: 15,
-    width: '48%',
+    width: '100%',
     borderWidth: 1,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#FFF',
   },
   googleButton: {
-    borderColor: '#4285F4',
-  },
-  facebookButton: {
-    borderColor: '#3b5998',
+    backgroundColor: '#FFF',
   },
   socialButtonText: {
     marginLeft: 10,
@@ -309,5 +338,10 @@ const styles = StyleSheet.create({
   loginText: {
     color: '#2196F3',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 }); 

@@ -5,17 +5,33 @@ import {
 } from '@react-navigation/drawer';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import { useAuth } from '@/context/AuthContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export function CustomDrawerContent(props: any) {
   const router = useRouter();
+  const { user, userProfile, logout } = useAuth();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
   const [loading, setLoading] = useState(false);
+
+  // Kullanıcı avatarı için baş harfler
+  const getInitials = () => {
+    if (userProfile?.fullName) {
+      return userProfile.fullName
+        .split(' ')
+        .map(name => name.charAt(0))
+        .join('')
+        .toUpperCase();
+    } else if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
 
   // Menüde olmayan navigasyon işlemleri için manuel yönlendirme
   const handleNavigation = (route: string) => {
@@ -28,16 +44,29 @@ export function CustomDrawerContent(props: any) {
     }, 300);
   };
 
-  const handleSettings = () => {
+  const handleWebsite = () => {
     // Drawer'ı kapat
     props.navigation.closeDrawer();
     
-    // Bildirim göster
+    // Web sitesini aç
     setTimeout(() => {
       Alert.alert(
-        "Ayarlar",
-        "Ayarlar ekranı henüz geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.",
-        [{ text: "Tamam", style: "default" }]
+        "Lango Web Sitesi",
+        "Lango web sitesini açmak istiyor musunuz?",
+        [
+          { 
+            text: "İptal", 
+            style: "cancel" 
+          },
+          { 
+            text: "Aç", 
+            onPress: () => {
+              Linking.openURL("https://lango-app.com").catch(err => {
+                Alert.alert("Hata", "Web sitesi açılamadı");
+              });
+            }
+          }
+        ]
       );
     }, 300);
   };
@@ -56,7 +85,7 @@ export function CustomDrawerContent(props: any) {
     }, 300);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (loading) return; // İşlem devam ediyorsa çıkış
 
     Alert.alert(
@@ -69,41 +98,26 @@ export function CustomDrawerContent(props: any) {
         },
         { 
           text: "Çıkış Yap", 
-          onPress: () => {
-            setLoading(true);
-            
-            // Drawer'ı kapat
-            props.navigation.closeDrawer();
-            
-            // Giriş ekranına yönlendirme işlemi
-            setTimeout(() => {
-              try {
-                // Çıkış yaptıktan sonra Lango uygulamasını yeniden başlat
-                // Bu durumda otomatik olarak giriş ekranına yönlendirilir
-                props.navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'index' }],
-                });
-                
-                // Tam temizlik için uygulamayı resetleme
-                // NOT: Gerçek bir logout API'si entegre edildiğinde
-                // burada oturum tokenları temizlenmelidir
-                
-                // Oturum kapatıldı bildirimi
-                setTimeout(() => {
-                  Alert.alert(
-                    "Oturum Kapatıldı",
-                    "Hesabınızdan başarıyla çıkış yaptınız.",
-                    [{ text: "Tamam" }]
-                  );
-                }, 500);
-              } catch (error) {
-                console.error("Logout error:", error);
-                Alert.alert("Hata", "Çıkış yapılırken bir sorun oluştu.");
-              } finally {
-                setLoading(false);
-              }
-            }, 300);
+          onPress: async () => {
+            try {
+              setLoading(true);
+              
+              // Drawer'ı kapat
+              props.navigation.closeDrawer();
+              
+              // Firebase Auth ile çıkış yapma
+              await logout();
+              
+              // Giriş sayfasına yönlendirme
+              setTimeout(() => {
+                router.replace("/auth/login");
+              }, 300);
+            } catch (error: any) {
+              console.error("Logout error:", error);
+              Alert.alert("Hata", "Çıkış yapılırken bir sorun oluştu.");
+            } finally {
+              setLoading(false);
+            }
           }
         }
       ]
@@ -120,13 +134,23 @@ export function CustomDrawerContent(props: any) {
           style={styles.profileImageContainer}
           activeOpacity={0.7}
           onPress={() => props.navigation.navigate('profile')}>
-          <MaterialIcons name="person" size={50} color={tintColor} />
+          {userProfile?.photoURL ? (
+            <Image 
+              source={{ uri: userProfile.photoURL }} 
+              style={styles.profileImage} 
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.initialsContainer}>
+              <Text style={styles.initialsText}>{getInitials()}</Text>
+            </View>
+          )}
         </TouchableOpacity>
         <Text style={[styles.profileName, { color: textColor }]}>
-          Kullanıcı Adı
+          {userProfile?.fullName || user?.email?.split('@')[0] || 'Kullanıcı Adı'}
         </Text>
         <Text style={[styles.profileLevel, { color: textColor }]}>
-          Başlangıç Seviyesi
+          {userProfile ? 'A1 Başlangıç Seviyesi' : 'Giriş yapılmamış'}
         </Text>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
@@ -151,11 +175,11 @@ export function CustomDrawerContent(props: any) {
       <View style={styles.divider} />
 
       <DrawerItem
-        label="Ayarlar"
+        label="Web Sitesi"
         icon={({ color, size }) => (
-          <MaterialIcons name="settings" size={size} color={color} />
+          <MaterialIcons name="public" size={size} color={color} />
         )}
-        onPress={handleSettings}
+        onPress={handleWebsite}
       />
       
       <DrawerItem
@@ -230,5 +254,17 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: 'rgba(0,0,0,0.1)',
     marginVertical: 8,
+  },
+  initialsContainer: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  initialsText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 }); 

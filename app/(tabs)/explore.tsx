@@ -1,50 +1,105 @@
-import { StyleSheet, ScrollView, Pressable, Image, SafeAreaView } from 'react-native';
+import { StyleSheet, ScrollView, TouchableOpacity, Pressable, Image, SafeAreaView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import React from 'react';
+import React, { useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { DrawerToggleButton } from '@/components/DrawerToggleButton';
+import { ProgressTracker, LanguageProgress } from '@/components/language/ProgressTracker';
+import { SpeakingPractice, Conversation } from '@/components/language/SpeakingPractice';
 
 export default function ExploreScreen() {
   const backgroundColor = useThemeColor({}, 'background');
+  const [activeSection, setActiveSection] = useState<'languages' | 'progress' | 'speaking'>('languages');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('İngilizce');
 
+  // Örnek dil verileri
   const popularLanguages = [
-    { id: 1, name: 'İspanyolca', learners: '289M', flag: '🇪🇸' },
-    { id: 2, name: 'Fransızca', learners: '132M', flag: '🇫🇷' },
-    { id: 3, name: 'Japonca', learners: '123M', flag: '🇯🇵' },
+    { id: 1, name: 'İngilizce', learners: '289M', flag: '🇬🇧' },
+    { id: 2, name: 'İspanyolca', learners: '120M', flag: '🇪🇸' },
+    { id: 3, name: 'Fransızca', learners: '132M', flag: '🇫🇷' },
     { id: 4, name: 'Almanca', learners: '98M', flag: '🇩🇪' },
-    { id: 5, name: 'Çince', learners: '221M', flag: '🇨🇳' },
-    { id: 6, name: 'Korece', learners: '87M', flag: '🇰🇷' },
+    { id: 5, name: 'İtalyanca', learners: '85M', flag: '🇮🇹' },
+    { id: 6, name: 'Japonca', learners: '123M', flag: '🇯🇵' },
+    { id: 7, name: 'Çince', learners: '221M', flag: '🇨🇳' },
+    { id: 8, name: 'Rusça', learners: '94M', flag: '🇷🇺' },
   ];
 
-  const communities = [
-    { id: 1, name: 'Dil Değişimi', members: '12.5K', icon: 'group' },
-    { id: 2, name: 'Çalışma Arkadaşları', members: '8.2K', icon: 'school' },
-    { id: 3, name: 'Kültür Merkezi', members: '5.7K', icon: 'public' },
-    { id: 4, name: 'Gramer Tutkunları', members: '3.9K', icon: 'auto-stories' },
-  ];
+  // Örnek ilerleme verileri
+  const progressData: LanguageProgress = {
+    language: selectedLanguage,
+    level: 'A1 Başlangıç',
+    currentXP: 350,
+    levelXP: 500,
+    streak: 7,
+    wordsLearned: 124,
+    grammarPoints: 42,
+    lessonsCompleted: 8,
+    totalLessons: 25,
+    skills: [
+      { name: 'Konuşma', progress: 65 },
+      { name: 'Dinleme', progress: 45 },
+      { name: 'Okuma', progress: 80 },
+      { name: 'Yazma', progress: 35 },
+      { name: 'Kelime Bilgisi', progress: 60 },
+      { name: 'Gramer', progress: 50 },
+    ]
+  };
 
-  const resources = [
-    { 
-      id: 1, 
-      title: 'Dil Öğrenenler için Podcast\'ler', 
-      description: 'Bu önerilen podcast\'lerle dinleme becerilerinizi geliştirin',
-      icon: 'headset'
-    },
-    { 
-      id: 2, 
-      title: 'Dil Öğrenme Filmleri', 
-      description: 'Eğlence ve öğrenme bir arada',
-      icon: 'movie'
-    },
-    { 
-      id: 3, 
-      title: 'Dil Öğrenme İpuçları', 
-      description: 'İlerlemenizi hızlandırmak için uzman tavsiyeleri',
-      icon: 'lightbulb'
-    },
-  ];
+  // Örnek konuşma pratiği verileri
+  const conversationData: Conversation = {
+    id: 'conv1',
+    title: 'Cafe\'de Sipariş Verme',
+    description: 'Bu diyalogda bir kafede sipariş vermeyi pratik edeceksiniz.',
+    phrases: [
+      {
+        id: 'p1',
+        text: 'Good morning! What can I get for you today?',
+        translation: 'Günaydın! Bugün size ne getirebilirim?',
+        isUserTurn: false
+      },
+      {
+        id: 'p2',
+        text: 'I would like a coffee, please.',
+        translation: 'Bir kahve istiyorum, lütfen.',
+        isUserTurn: true
+      },
+      {
+        id: 'p3',
+        text: 'Sure! Would you like it black or with milk?',
+        translation: 'Tabi! Sade mi sütlü mü olsun?',
+        isUserTurn: false
+      },
+      {
+        id: 'p4',
+        text: 'With milk, please. And a croissant.',
+        translation: 'Sütlü olsun lütfen. Ve bir kruvasan.',
+        isUserTurn: true
+      },
+      {
+        id: 'p5',
+        text: 'Great choice! That will be $5.50.',
+        translation: 'Harika seçim! 5.50 dolar tuttu.',
+        isUserTurn: false
+      },
+      {
+        id: 'p6',
+        text: 'Here you are. Thank you.',
+        translation: 'Buyurun. Teşekkür ederim.',
+        isUserTurn: true
+      }
+    ]
+  };
+
+  const handleLanguageSelect = (language: string) => {
+    setSelectedLanguage(language);
+    setActiveSection('progress');
+  };
+
+  const handleConversationComplete = (convId: string, score: number) => {
+    console.log(`Conversation ${convId} completed with score: ${score}`);
+    // Burada konuşma pratiği sonuçlarını kaydedebilirsiniz
+  };
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
@@ -52,85 +107,140 @@ export default function ExploreScreen() {
       <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.header}>
           <ThemedText type="title">Dilleri Keşfedin</ThemedText>
-          <ThemedText>Bir sonraki dil maceranızı bulun</ThemedText>
+          <ThemedText>Dil öğrenme yolculuğunuza başlayın</ThemedText>
         </ThemedView>
 
-        <ThemedView style={styles.searchContainer}>
-          <MaterialIcons name="search" size={24} color="#757575" />
-          <ThemedText style={styles.searchPlaceholder}>Dilleri, toplulukları ara...</ThemedText>
+        <ThemedView style={styles.tabsContainer}>
+          <TouchableOpacity 
+            style={[styles.tab, activeSection === 'languages' && styles.activeTab]}
+            onPress={() => setActiveSection('languages')}
+          >
+            <MaterialIcons 
+              name="translate" 
+              size={24} 
+              color={activeSection === 'languages' ? '#2196F3' : '#757575'} 
+            />
+            <ThemedText 
+              style={[
+                styles.tabText, 
+                activeSection === 'languages' && styles.activeTabText
+              ]}
+            >
+              Diller
+            </ThemedText>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.tab, activeSection === 'progress' && styles.activeTab]}
+            onPress={() => setActiveSection('progress')}
+          >
+            <MaterialIcons 
+              name="insights" 
+              size={24} 
+              color={activeSection === 'progress' ? '#4CAF50' : '#757575'} 
+            />
+            <ThemedText 
+              style={[
+                styles.tabText, 
+                activeSection === 'progress' && styles.activeTabText
+              ]}
+            >
+              İlerleme
+            </ThemedText>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.tab, activeSection === 'speaking' && styles.activeTab]}
+            onPress={() => setActiveSection('speaking')}
+          >
+            <MaterialIcons 
+              name="record-voice-over" 
+              size={24} 
+              color={activeSection === 'speaking' ? '#FF9800' : '#757575'} 
+            />
+            <ThemedText 
+              style={[
+                styles.tabText, 
+                activeSection === 'speaking' && styles.activeTabText
+              ]}
+            >
+              Konuşma
+            </ThemedText>
+          </TouchableOpacity>
         </ThemedView>
 
-        <ThemedView style={styles.section}>
-          <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="translate" size={24} color="#2196F3" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Popüler Diller</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.languageGrid}>
-            {popularLanguages.map(language => (
-              <Pressable key={language.id} style={styles.languageItem}>
-                <ThemedView style={styles.languageCard}>
-                  <ThemedText style={styles.flag}>{language.flag}</ThemedText>
-                  <ThemedText type="defaultSemiBold">{language.name}</ThemedText>
-                  <ThemedText style={styles.learners}>{language.learners} öğrenci</ThemedText>
-                </ThemedView>
-              </Pressable>
-            ))}
-          </ThemedView>
-        </ThemedView>
+        {activeSection === 'languages' && (
+          <ThemedView style={styles.sectionContainer}>
+            <ThemedText type="subtitle">Öğrenebileceğiniz Diller</ThemedText>
+            <ThemedText style={styles.sectionDescription}>
+              İlginizi çeken bir dil seçerek öğrenmeye başlayın
+            </ThemedText>
 
-        <ThemedView style={styles.section}>
-          <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="people" size={24} color="#9C27B0" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Topluluklar</ThemedText>
-          </ThemedView>
-          {communities.map(community => (
-            <Pressable key={community.id}>
-              <ThemedView style={styles.communityCard}>
-                <MaterialIcons name={community.icon} size={36} color="#9C27B0" style={styles.communityIcon} />
-                <ThemedView style={styles.communityInfo}>
-                  <ThemedText type="defaultSemiBold">{community.name}</ThemedText>
-                  <ThemedText>{community.members} üye</ThemedText>
-                </ThemedView>
-                <MaterialIcons name="arrow-forward-ios" size={16} color="#757575" />
-              </ThemedView>
-            </Pressable>
-          ))}
-        </ThemedView>
+            <ThemedView style={styles.languageGrid}>
+              {popularLanguages.map(language => (
+                <TouchableOpacity 
+                  key={language.id} 
+                  style={styles.languageCard}
+                  onPress={() => handleLanguageSelect(language.name)}
+                >
+                  <ThemedText style={styles.languageFlag}>{language.flag}</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={styles.languageName}>
+                    {language.name}
+                  </ThemedText>
+                  <ThemedText style={styles.languageLearners}>
+                    {language.learners} öğrenci
+                  </ThemedText>
 
-        <ThemedView style={styles.section}>
-          <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="library-books" size={24} color="#FF9800" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Öğrenme Kaynakları</ThemedText>
-          </ThemedView>
-          {resources.map(resource => (
-            <Pressable key={resource.id}>
-              <ThemedView style={styles.resourceCard}>
-                <ThemedView style={styles.resourceIconContainer}>
-                  <MaterialIcons name={resource.icon} size={24} color="#FF9800" />
-                </ThemedView>
-                <ThemedView style={styles.resourceInfo}>
-                  <ThemedText type="defaultSemiBold">{resource.title}</ThemedText>
-                  <ThemedText>{resource.description}</ThemedText>
-                </ThemedView>
-              </ThemedView>
-            </Pressable>
-          ))}
-        </ThemedView>
-
-        <ThemedView style={styles.section}>
-          <ThemedView style={styles.sectionHeader}>
-            <MaterialIcons name="event" size={24} color="#4CAF50" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Etkinlikler</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.featuredEventCard}>
-            <ThemedView style={styles.eventBanner}>
-              <MaterialIcons name="celebration" size={40} color="white" />
-              <ThemedText style={styles.eventBannerText}>Dil Festivali</ThemedText>
+                  <ThemedView style={styles.languageStartButton}>
+                    <ThemedText style={styles.languageStartText}>
+                      {selectedLanguage === language.name ? 'Devam Et' : 'Başla'}
+                    </ThemedText>
+                  </ThemedView>
+                </TouchableOpacity>
+              ))}
             </ThemedView>
-            <ThemedView style={styles.eventContent}>
-              <ThemedText type="defaultSemiBold">Sanal Dil Değişim Festivali</ThemedText>
-              <ThemedText>Aylık dil değişim etkinliğimizde dünyanın her yerinden konuşmacılara katılın</ThemedText>
-              <ThemedText style={styles.eventDate}>15 Nisan 2023 • 15:00</ThemedText>
+          </ThemedView>
+        )}
+
+        {activeSection === 'progress' && (
+          <ThemedView style={styles.sectionContainer}>
+            <ThemedText type="subtitle">Dil İlerlemeniz</ThemedText>
+            <ThemedText style={styles.sectionDescription}>
+              Öğrenme yolculuğunuzu takip edin ve becerilerinizi görün
+            </ThemedText>
+
+            <ProgressTracker progress={progressData} />
+          </ThemedView>
+        )}
+
+        {activeSection === 'speaking' && (
+          <ThemedView style={styles.sectionContainer}>
+            <ThemedText type="subtitle">Konuşma Pratiği</ThemedText>
+            <ThemedText style={styles.sectionDescription}>
+              Gerçek dünya senaryolarında {selectedLanguage} konuşma pratiği yapın
+            </ThemedText>
+
+            <SpeakingPractice 
+              conversation={conversationData}
+              onComplete={handleConversationComplete}
+            />
+          </ThemedView>
+        )}
+
+        <ThemedView style={styles.featuredSection}>
+          <ThemedText type="subtitle">Dil Öğrenme İpuçları</ThemedText>
+          <ThemedView style={styles.featuredCard}>
+            <MaterialIcons name="lightbulb" size={36} color="#FFC107" style={styles.featuredIcon} />
+            <ThemedView style={styles.featuredContent}>
+              <ThemedText type="defaultSemiBold">Günlük Pratik</ThemedText>
+              <ThemedText>Dil öğrenmenin en etkili yolu, her gün düzenli olarak pratik yapmaktır. Kısa süreli ama tutarlı çalışmalar, uzun süreli düzensiz çalışmalardan daha etkilidir.</ThemedText>
+            </ThemedView>
+          </ThemedView>
+          <ThemedView style={styles.featuredCard}>
+            <MaterialIcons name="headset" size={36} color="#9C27B0" style={styles.featuredIcon} />
+            <ThemedView style={styles.featuredContent}>
+              <ThemedText type="defaultSemiBold">Dinleme Becerileri</ThemedText>
+              <ThemedText>Dile maruz kalmak dinleme becerilerinizi geliştirir. Filmler, diziler ve müzikler dinleyerek telaffuzunuzu ve anlama yeteneğinizi iyileştirebilirsiniz.</ThemedText>
             </ThemedView>
           </ThemedView>
         </ThemedView>
@@ -149,113 +259,106 @@ const styles = StyleSheet.create({
     paddingTop: 80, // DrawerToggleButton için alan bırak
   },
   header: {
-    marginBottom: 16,
     alignItems: 'center',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 12,
     marginBottom: 24,
   },
-  searchPlaceholder: {
-    marginLeft: 8,
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  activeTab: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
+  tabText: {
+    marginTop: 4,
+    fontSize: 12,
     color: '#757575',
   },
-  section: {
+  activeTabText: {
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  sectionContainer: {
     marginBottom: 24,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    marginLeft: 8,
+  sectionDescription: {
+    color: '#757575',
+    marginBottom: 16,
   },
   languageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  languageItem: {
-    width: '30%',
-    marginBottom: 12,
-  },
   languageCard: {
-    backgroundColor: '#F5F5F5',
-    padding: 12,
+    width: '48%',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  flag: {
-    fontSize: 28,
+  languageFlag: {
+    fontSize: 36,
+    marginBottom: 8,
+  },
+  languageName: {
     marginBottom: 4,
+    textAlign: 'center',
   },
-  learners: {
+  languageLearners: {
     fontSize: 12,
     color: '#757575',
-    marginTop: 4,
+    marginBottom: 12,
   },
-  communityCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 8,
+  languageStartButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
   },
-  communityIcon: {
-    marginRight: 16,
-  },
-  communityInfo: {
-    flex: 1,
-  },
-  resourceCard: {
-    flexDirection: 'row',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 8,
-  },
-  resourceIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFF3E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  resourceInfo: {
-    flex: 1,
-  },
-  featuredEventCard: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginTop: 4,
-  },
-  eventBanner: {
-    backgroundColor: '#4CAF50',
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  eventBannerText: {
-    color: 'white',
+  languageStartText: {
+    color: '#FFFFFF',
+    fontSize: 12,
     fontWeight: 'bold',
-    fontSize: 18,
-    marginLeft: 12,
   },
-  eventContent: {
+  featuredSection: {
+    marginBottom: 24,
+  },
+  featuredCard: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     padding: 16,
+    marginTop: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  eventDate: {
-    marginTop: 8,
-    color: '#757575',
+  featuredIcon: {
+    marginRight: 16,
+  },
+  featuredContent: {
+    flex: 1,
   },
 });

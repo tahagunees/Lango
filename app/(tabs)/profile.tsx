@@ -5,50 +5,80 @@ import { Stack, useRouter } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfileScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const iconColor = useThemeColor({}, 'icon');
   const router = useRouter();
+  const { user, userProfile, logout } = useAuth();
+
+  // Kullanıcı adı veya e-posta adından baş harfler
+  const getInitials = () => {
+    if (userProfile?.fullName) {
+      return userProfile.fullName
+        .split(' ')
+        .map(name => name.charAt(0))
+        .join('')
+        .toUpperCase();
+    } else if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
+
+  // Katılma tarihi formatı
+  const getJoinedDate = () => {
+    if (userProfile?.createdAt) {
+      const date = new Date(userProfile.createdAt);
+      const month = date.toLocaleString('tr-TR', { month: 'long' });
+      const year = date.getFullYear();
+      return `${month} ${year} tarihinde katıldı`;
+    }
+    return 'Yeni Kullanıcı';
+  };
 
   const stats = [
-    { id: 1, title: 'Total XP', value: '2,540', icon: '🏆' },
-    { id: 2, title: 'Learning', value: '3 Languages', icon: '🌎' },
-    { id: 3, title: 'Daily Streak', value: '5 Days', icon: '🔥' },
-    { id: 4, title: 'Words Learned', value: '346', icon: '📚' },
+    { id: 1, title: 'Toplam XP', value: '2,540', icon: '🏆' },
+    { id: 2, title: 'Öğrenilen', value: '3 Dil', icon: '🌎' },
+    { id: 3, title: 'Günlük Seri', value: '5 Gün', icon: '🔥' },
+    { id: 4, title: 'Kelimeler', value: '346', icon: '📚' },
   ];
 
   const settings = [
-    { id: 1, title: 'Account Settings', icon: 'person' },
-    { id: 2, title: 'Notifications', icon: 'notifications' },
-    { id: 3, title: 'Language Preferences', icon: 'language' },
-    { id: 4, title: 'Daily Goal', icon: 'bar-chart' },
-    { id: 5, title: 'Appearance', icon: 'palette' },
-    { id: 6, title: 'Help & Support', icon: 'help' },
+    { id: 1, title: 'Hesap Ayarları', icon: 'person' },
+    { id: 2, title: 'Bildirimler', icon: 'notifications' },
+    { id: 3, title: 'Dil Tercihleri', icon: 'language' },
+    { id: 4, title: 'Günlük Hedef', icon: 'bar-chart' },
+    { id: 5, title: 'Görünüm', icon: 'palette' },
+    { id: 6, title: 'Yardım ve Destek', icon: 'help' },
   ];
 
   const achievements = [
-    { id: 1, title: '7-Day Streak', description: 'Practice 7 days in a row', progress: 71 },
-    { id: 2, title: 'Vocabulary Master', description: 'Learn 500 words', progress: 69 },
-    { id: 3, title: 'Grammar Expert', description: 'Complete all grammar lessons', progress: 45 },
+    { id: 1, title: '7 Günlük Seri', description: 'Arka arkaya 7 gün pratik yapın', progress: 71 },
+    { id: 2, title: 'Kelime Ustası', description: '500 kelime öğrenin', progress: 69 },
+    { id: 3, title: 'Gramer Uzmanı', description: 'Tüm gramer derslerini tamamlayın', progress: 45 },
   ];
 
-  const handleLogout = () => {
-    // Burada Firebase Auth çıkış işlemi eklenebilir
-    // Şimdilik doğrudan login sayfasına yönlendiriyoruz
-    router.replace('/auth/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace('/auth/login');
+    } catch (error) {
+      console.error('Çıkış yapılırken hata oluştu:', error);
+    }
   };
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
-      <Stack.Screen options={{ headerShown: true, title: 'Profile' }} />
+      <Stack.Screen options={{ headerShown: true, title: 'Profil' }} />
       <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.profileHeader}>
           <ThemedView style={styles.profilePicture}>
-            <ThemedText style={styles.profileInitials}>JD</ThemedText>
+            <ThemedText style={styles.profileInitials}>{getInitials()}</ThemedText>
           </ThemedView>
-          <ThemedText type="title">John Doe</ThemedText>
-          <ThemedText>Joined June 2023</ThemedText>
+          <ThemedText type="title">{userProfile?.fullName || user?.email?.split('@')[0] || 'Kullanıcı'}</ThemedText>
+          <ThemedText>{getJoinedDate()}</ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.statsContainer}>
@@ -62,7 +92,7 @@ export default function ProfileScreen() {
         </ThemedView>
 
         <ThemedView style={styles.section}>
-          <ThemedText type="subtitle">Achievements</ThemedText>
+          <ThemedText type="subtitle">Başarılar</ThemedText>
           {achievements.map(achievement => (
             <ThemedView key={achievement.id} style={styles.achievementCard}>
               <ThemedView style={styles.achievementInfo}>
@@ -82,7 +112,7 @@ export default function ProfileScreen() {
         </ThemedView>
 
         <ThemedView style={styles.section}>
-          <ThemedText type="subtitle">Settings</ThemedText>
+          <ThemedText type="subtitle">Ayarlar</ThemedText>
           {settings.map(setting => (
             <Pressable key={setting.id}>
               <ThemedView style={styles.settingItem}>
@@ -98,7 +128,7 @@ export default function ProfileScreen() {
         <Pressable onPress={handleLogout}>
           <ThemedView style={styles.logoutButton}>
             <MaterialIcons name="exit-to-app" size={20} color="white" style={styles.logoutIcon} />
-            <ThemedText style={styles.logoutText}>Logout</ThemedText>
+            <ThemedText style={styles.logoutText}>Çıkış Yap</ThemedText>
           </ThemedView>
         </Pressable>
       </ScrollView>
