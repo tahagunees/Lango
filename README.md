@@ -1,6 +1,6 @@
 # Lango - İngilizce Öğrenme Uygulaması
 
-![Lango Logo](assets/images/splash-icon.png)
+
 
 ## Proje Tanıtımı
 
