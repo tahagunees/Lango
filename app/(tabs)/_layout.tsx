@@ -1,75 +1,100 @@
-import { Tabs } from 'expo-router';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import 'react-native-gesture-handler';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { HapticTab } from '@/components/HapticTab';
-import TabBarBackground from '@/components/ui/TabBarBackground';
+import { CustomDrawerContent } from '@/components/ui/CustomDrawerContent';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-export default function TabLayout() {
+const Drawer = createDrawerNavigator();
+
+export default function SidebarLayout() {
   const colorScheme = useColorScheme();
   const backgroundColor = useThemeColor({}, 'background');
+  const activeColor = Colors[colorScheme ?? 'light'].tint;
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-      <Tabs
+      <Drawer.Navigator
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
           headerShown: false,
-          tabBarButton: HapticTab,
-          tabBarBackground: TabBarBackground,
-          tabBarStyle: {
-            ...Platform.select({
-              ios: {
-                position: 'absolute',
-              },
-              default: {},
-            }),
-            borderTopWidth: 0,
-            elevation: 0,
-            shadowOpacity: 0,
+          drawerActiveTintColor: activeColor,
+          drawerStyle: {
+            backgroundColor: useThemeColor({}, 'background'),
+            width: 280,
           },
         }}>
-        <Tabs.Screen
+        <Drawer.Screen
           name="index"
+          getComponent={() => require('./index').default}
           options={{
-            title: 'Home',
-            tabBarIcon: ({ color, size }) => (
+            title: 'Lango',
+            drawerLabel: 'Anasayfa',
+            drawerIcon: ({ color, size }) => (
               <MaterialIcons name="home" size={size} color={color} />
             ),
           }}
         />
-        <Tabs.Screen
+        <Drawer.Screen
           name="lessons"
+          getComponent={() => require('./lessons').default}
           options={{
-            title: 'Lessons',
-            tabBarIcon: ({ color, size }) => (
+            title: 'Dersler',
+            drawerLabel: 'Dersler',
+            drawerIcon: ({ color, size }) => (
               <MaterialIcons name="book" size={size} color={color} />
             ),
           }}
         />
-        <Tabs.Screen
+        <Drawer.Screen
           name="practice"
+          getComponent={() => require('./practice').default}
           options={{
-            title: 'Practice',
-            tabBarIcon: ({ color, size }) => (
+            title: 'Pratik',
+            drawerLabel: 'Pratik',
+            drawerIcon: ({ color, size }) => (
               <MaterialIcons name="fitness-center" size={size} color={color} />
             ),
           }}
         />
-        <Tabs.Screen
+        <Drawer.Screen
           name="profile"
+          getComponent={() => require('./profile').default}
           options={{
-            title: 'Profile',
-            tabBarIcon: ({ color, size }) => (
+            title: 'Profil',
+            drawerLabel: 'Profil',
+            drawerIcon: ({ color, size }) => (
               <MaterialIcons name="person" size={size} color={color} />
             ),
           }}
         />
-      </Tabs>
+        <Drawer.Screen
+          name="explore"
+          getComponent={() => require('./explore').default}
+          options={{
+            title: 'Keşfet',
+            drawerLabel: 'Keşfet',
+            drawerIcon: ({ color, size }) => (
+              <MaterialIcons name="explore" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="settings"
+          getComponent={() => require('./settings').default}
+          options={{
+            title: 'Ayarlar',
+            drawerLabel: 'Ayarlar',
+            drawerIcon: ({ color, size }) => (
+              <MaterialIcons name="settings" size={size} color={color} />
+            ),
+          }}
+        />
+      </Drawer.Navigator>
     </View>
   );
 }

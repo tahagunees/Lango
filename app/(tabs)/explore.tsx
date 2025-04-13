@@ -1,66 +1,69 @@
-import { StyleSheet, ScrollView, Pressable, Image } from 'react-native';
+import { StyleSheet, ScrollView, Pressable, Image, SafeAreaView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Stack } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { DrawerToggleButton } from '@/components/DrawerToggleButton';
 
 export default function ExploreScreen() {
+  const backgroundColor = useThemeColor({}, 'background');
+
   const popularLanguages = [
-    { id: 1, name: 'Spanish', learners: '289M', flag: '🇪🇸' },
-    { id: 2, name: 'French', learners: '132M', flag: '🇫🇷' },
-    { id: 3, name: 'Japanese', learners: '123M', flag: '🇯🇵' },
-    { id: 4, name: 'German', learners: '98M', flag: '🇩🇪' },
-    { id: 5, name: 'Chinese', learners: '221M', flag: '🇨🇳' },
-    { id: 6, name: 'Korean', learners: '87M', flag: '🇰🇷' },
+    { id: 1, name: 'İspanyolca', learners: '289M', flag: '🇪🇸' },
+    { id: 2, name: 'Fransızca', learners: '132M', flag: '🇫🇷' },
+    { id: 3, name: 'Japonca', learners: '123M', flag: '🇯🇵' },
+    { id: 4, name: 'Almanca', learners: '98M', flag: '🇩🇪' },
+    { id: 5, name: 'Çince', learners: '221M', flag: '🇨🇳' },
+    { id: 6, name: 'Korece', learners: '87M', flag: '🇰🇷' },
   ];
 
   const communities = [
-    { id: 1, name: 'Language Exchange', members: '12.5K', icon: 'group' },
-    { id: 2, name: 'Study Buddies', members: '8.2K', icon: 'school' },
-    { id: 3, name: 'Cultural Hub', members: '5.7K', icon: 'public' },
-    { id: 4, name: 'Grammar Geeks', members: '3.9K', icon: 'auto-stories' },
+    { id: 1, name: 'Dil Değişimi', members: '12.5K', icon: 'group' },
+    { id: 2, name: 'Çalışma Arkadaşları', members: '8.2K', icon: 'school' },
+    { id: 3, name: 'Kültür Merkezi', members: '5.7K', icon: 'public' },
+    { id: 4, name: 'Gramer Tutkunları', members: '3.9K', icon: 'auto-stories' },
   ];
 
   const resources = [
     { 
       id: 1, 
-      title: 'Best Podcasts for Learners', 
-      description: 'Improve your listening skills with these recommended podcasts',
+      title: 'Dil Öğrenenler için Podcast\'ler', 
+      description: 'Bu önerilen podcast\'lerle dinleme becerilerinizi geliştirin',
       icon: 'headset'
     },
     { 
       id: 2, 
-      title: 'Top Language Learning Movies', 
-      description: 'Entertainment and learning combined',
+      title: 'Dil Öğrenme Filmleri', 
+      description: 'Eğlence ve öğrenme bir arada',
       icon: 'movie'
     },
     { 
       id: 3, 
-      title: 'Language Learning Tips', 
-      description: 'Expert advice to accelerate your progress',
+      title: 'Dil Öğrenme İpuçları', 
+      description: 'İlerlemenizi hızlandırmak için uzman tavsiyeleri',
       icon: 'lightbulb'
     },
   ];
 
   return (
-    <>
-      <Stack.Screen options={{ headerShown: true, title: 'Explore' }} />
-      <ScrollView style={styles.container}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+      <DrawerToggleButton />
+      <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.header}>
-          <ThemedText type="title">Discover Languages</ThemedText>
-          <ThemedText>Find your next language adventure</ThemedText>
+          <ThemedText type="title">Dilleri Keşfedin</ThemedText>
+          <ThemedText>Bir sonraki dil maceranızı bulun</ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.searchContainer}>
           <MaterialIcons name="search" size={24} color="#757575" />
-          <ThemedText style={styles.searchPlaceholder}>Search languages, communities...</ThemedText>
+          <ThemedText style={styles.searchPlaceholder}>Dilleri, toplulukları ara...</ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="translate" size={24} color="#2196F3" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Popular Languages</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Popüler Diller</ThemedText>
           </ThemedView>
           <ThemedView style={styles.languageGrid}>
             {popularLanguages.map(language => (
@@ -68,7 +71,7 @@ export default function ExploreScreen() {
                 <ThemedView style={styles.languageCard}>
                   <ThemedText style={styles.flag}>{language.flag}</ThemedText>
                   <ThemedText type="defaultSemiBold">{language.name}</ThemedText>
-                  <ThemedText style={styles.learners}>{language.learners} learners</ThemedText>
+                  <ThemedText style={styles.learners}>{language.learners} öğrenci</ThemedText>
                 </ThemedView>
               </Pressable>
             ))}
@@ -78,7 +81,7 @@ export default function ExploreScreen() {
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="people" size={24} color="#9C27B0" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Communities</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Topluluklar</ThemedText>
           </ThemedView>
           {communities.map(community => (
             <Pressable key={community.id}>
@@ -86,7 +89,7 @@ export default function ExploreScreen() {
                 <MaterialIcons name={community.icon} size={36} color="#9C27B0" style={styles.communityIcon} />
                 <ThemedView style={styles.communityInfo}>
                   <ThemedText type="defaultSemiBold">{community.name}</ThemedText>
-                  <ThemedText>{community.members} members</ThemedText>
+                  <ThemedText>{community.members} üye</ThemedText>
                 </ThemedView>
                 <MaterialIcons name="arrow-forward-ios" size={16} color="#757575" />
               </ThemedView>
@@ -97,7 +100,7 @@ export default function ExploreScreen() {
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="library-books" size={24} color="#FF9800" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Learning Resources</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Öğrenme Kaynakları</ThemedText>
           </ThemedView>
           {resources.map(resource => (
             <Pressable key={resource.id}>
@@ -117,29 +120,33 @@ export default function ExploreScreen() {
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="event" size={24} color="#4CAF50" />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Events</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Etkinlikler</ThemedText>
           </ThemedView>
           <ThemedView style={styles.featuredEventCard}>
             <ThemedView style={styles.eventBanner}>
               <MaterialIcons name="celebration" size={40} color="white" />
-              <ThemedText style={styles.eventBannerText}>Language Festival</ThemedText>
+              <ThemedText style={styles.eventBannerText}>Dil Festivali</ThemedText>
             </ThemedView>
             <ThemedView style={styles.eventContent}>
-              <ThemedText type="defaultSemiBold">Virtual Language Exchange Festival</ThemedText>
-              <ThemedText>Join speakers from around the world in our monthly language exchange event</ThemedText>
-              <ThemedText style={styles.eventDate}>April 15, 2023 • 3:00 PM</ThemedText>
+              <ThemedText type="defaultSemiBold">Sanal Dil Değişim Festivali</ThemedText>
+              <ThemedText>Aylık dil değişim etkinliğimizde dünyanın her yerinden konuşmacılara katılın</ThemedText>
+              <ThemedText style={styles.eventDate}>15 Nisan 2023 • 15:00</ThemedText>
             </ThemedView>
           </ThemedView>
         </ThemedView>
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 16,
+    paddingTop: 80, // DrawerToggleButton için alan bırak
   },
   header: {
     marginBottom: 16,

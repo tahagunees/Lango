@@ -1,10 +1,10 @@
-import { StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView, View } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Stack } from 'expo-router';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { DrawerToggleButton } from '@/components/DrawerToggleButton';
 
 export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
@@ -12,38 +12,38 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
-      <Stack.Screen options={{ headerShown: true, title: 'Lango' }} />
+      <DrawerToggleButton />
       <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.header}>
           <MaterialIcons name="translate" size={48} color={iconColor} style={styles.headerIcon} />
-          <ThemedText type="title">Welcome to Lango!</ThemedText>
-          <ThemedText>Your personal language learning assistant</ThemedText>
+          <ThemedText type="title">Lango'ya Hoş Geldiniz!</ThemedText>
+          <ThemedText>Kişisel dil öğrenme asistanınız</ThemedText>
         </ThemedView>
         
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="flag" size={24} color={iconColor} />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Daily Goal</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Günlük Hedef</ThemedText>
           </ThemedView>
           <ThemedView style={styles.goalContainer}>
             <ThemedView style={styles.progressBar}>
               <ThemedView style={[styles.progress, { width: '65%' }]} />
             </ThemedView>
-            <ThemedText>13/20 minutes today</ThemedText>
+            <ThemedText>Bugün 13/20 dakika</ThemedText>
           </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="play-circle-filled" size={24} color={iconColor} />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Continue Learning</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Öğrenmeye Devam Et</ThemedText>
           </ThemedView>
           <ThemedView style={styles.lessonCard}>
             <ThemedView style={styles.lessonCardHeader}>
               <MaterialIcons name="chat" size={24} color={iconColor} />
               <ThemedView style={styles.lessonInfo}>
-                <ThemedText type="defaultSemiBold">Basic Phrases</ThemedText>
-                <ThemedText>Lesson 3 of 10</ThemedText>
+                <ThemedText type="defaultSemiBold">Temel İfadeler</ThemedText>
+                <ThemedText>10 Dersin 3.'sü</ThemedText>
               </ThemedView>
             </ThemedView>
             <ThemedView style={styles.lessonProgress}>
@@ -55,20 +55,20 @@ export default function HomeScreen() {
         <ThemedView style={styles.section}>
           <ThemedView style={styles.sectionHeader}>
             <MaterialIcons name="history" size={24} color={iconColor} />
-            <ThemedText type="subtitle" style={styles.sectionTitle}>Recent Activity</ThemedText>
+            <ThemedText type="subtitle" style={styles.sectionTitle}>Son Aktiviteler</ThemedText>
           </ThemedView>
           <ThemedView style={styles.activityItem}>
             <MaterialIcons name="spellcheck" size={24} color="#607D8B" style={styles.activityIcon} />
             <ThemedView style={styles.activityInfo}>
-              <ThemedText type="defaultSemiBold">Vocabulary Practice</ThemedText>
-              <ThemedText>25 words reviewed</ThemedText>
+              <ThemedText type="defaultSemiBold">Kelime Çalışması</ThemedText>
+              <ThemedText>25 kelime gözden geçirildi</ThemedText>
             </ThemedView>
           </ThemedView>
           <ThemedView style={styles.activityItem}>
             <MaterialIcons name="mic" size={24} color="#9C27B0" style={styles.activityIcon} />
             <ThemedView style={styles.activityInfo}>
-              <ThemedText type="defaultSemiBold">Pronunciation Exercise</ThemedText>
-              <ThemedText>15 minutes practice</ThemedText>
+              <ThemedText type="defaultSemiBold">Telaffuz Egzersizi</ThemedText>
+              <ThemedText>15 dakika pratik</ThemedText>
             </ThemedView>
           </ThemedView>
         </ThemedView>
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingTop: 80, // DrawerToggleButton için alan bırak
   },
   header: {
     marginBottom: 24,
