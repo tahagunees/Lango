@@ -82,7 +82,7 @@ export default function HomeScreen() {
       <DrawerToggleButton />
       <ScrollView style={[styles.container, { backgroundColor }]}>
         <ThemedView style={styles.header}>
-          <ThemedText type="title">Merhaba, {userProfile?.fullName || 'Dil Öğrenen'}</ThemedText>
+          <ThemedText type="title">Merhaba, {userProfile?.fullName || user?.email?.split('@')[0] || 'Misafir'}</ThemedText>
           <ThemedText>Bugün dil öğrenmeye devam edelim!</ThemedText>
         </ThemedView>
 

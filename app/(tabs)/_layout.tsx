@@ -62,6 +62,17 @@ export default function SidebarLayout() {
           }}
         />
         <Drawer.Screen
+          name="games"
+          getComponent={() => require('./games').default}
+          options={{
+            title: 'Oyunlar',
+            drawerLabel: 'Oyunlar',
+            drawerIcon: ({ color, size }) => (
+              <MaterialIcons name="sports-esports" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
           name="profile"
           getComponent={() => require('./profile').default}
           options={{

@@ -14,9 +14,13 @@ export interface Lesson {
   duration: number; // dakika cinsinden
   progress: number; // 0-100 arası
   imageUrl?: string;
+  image?: string;
   isLocked: boolean;
   xpPoints: number;
   wordCount: number;
+  category?: string;
+  vocabularyItems?: any[];
+  completed?: boolean;
 }
 
 interface LessonCardProps {
@@ -48,6 +52,15 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onPress }) => {
     }
   };
 
+  const getImageSource = () => {
+    if (lesson.imageUrl) {
+      return { uri: lesson.imageUrl };
+    } else if (lesson.image) {
+      return { uri: lesson.image };
+    }
+    return require('@/assets/images/lesson-default.jpg');
+  };
+
   return (
     <TouchableOpacity 
       style={styles.card} 
@@ -55,7 +68,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onPress }) => {
       disabled={lesson.isLocked}
     >
       <ImageBackground
-        source={lesson.imageUrl ? { uri: lesson.imageUrl } : require('@/assets/images/lesson-default.jpg')}
+        source={getImageSource()}
         style={styles.cardBg}
         imageStyle={styles.cardBgImage}
       >

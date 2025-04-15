@@ -59,46 +59,56 @@ Lango, İngilizce öğrenmek isteyenler için tasarlanmış kapsamlı bir mobil 
 
 ## Kurulum
 
-```bash
-# Projeyi klonlayın
-git clone https://github.com/kullanici/lango.git
+1. Projeyi klonlayın:
+   ```bash
+   git clone https://github.com/kullanici/lango.git
+   ```
 
-# Proje klasörüne gidin
-cd lango
+2. Bağımlılıkları yükleyin:
+   ```bash
+   cd lango
+   npm install
+   ```
 
-# Bağımlılıkları yükleyin
-npm install
+3. Çevresel değişkenleri ayarlayın:
+   ```bash
+   cp .env.example .env
+   ```
+   `.env` dosyasını açın ve gerekli API anahtarlarını ekleyin. **API anahtarlarınızı asla repoya pushlamayın!**
 
-# Uygulamayı başlatın
-npx expo start
+4. Uygulamayı başlatın:
+   ```bash
+   npx expo start
+   ```
+
+## Çevresel Değişkenler
+
+Bu uygulama, Firebase Authentication ve Gemini AI API gibi harici servisleri kullanmaktadır. Bu servislerin kullanımı için API anahtarlarına ihtiyaç vardır.
+
+### API Anahtarlarını Ayarlama
+
+1. `.env.example` dosyasını `.env` olarak kopyalayın
+2. `.env` dosyasını açın ve placeholder değerleri kendi API anahtarlarınızla değiştirin:
+
 ```
-
-## Ortam Değişkenleri
-
-Projede API anahtarları ve hassas bilgiler için `.env` dosyası kullanılmaktadır. Güvenlik için:
-
-1. Repo'da bulunan `.env.example` dosyasını `.env` olarak kopyalayın:
-```bash
-cp .env.example .env
-```
-
-2. `.env` dosyasındaki anahtarları kendi API anahtarlarınızla değiştirin:
-```
-# Gemini AI API anahtarı
-GEMINI_API_KEY=your_api_key_here
+# Gemini AI API Key
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
 
 # Firebase yapılandırması
-FIREBASE_API_KEY=your_firebase_api_key
-FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-FIREBASE_PROJECT_ID=your_firebase_project_id
-FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-FIREBASE_APP_ID=your_firebase_app_id
+FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY_HERE
+FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+FIREBASE_MESSAGING_SENDER_ID=123456789012
+FIREBASE_APP_ID=1:123456789012:web:abcdef1234567890
 ```
 
-3. `.env` dosyası `.gitignore`'a eklenmiştir, böylece API anahtarlarınız yanlışlıkla repo'ya gönderilmez.
+### Güvenlik Uyarısı ⚠️
 
-> ⚠️ **Güvenlik Uyarısı**: API anahtarlarınızı asla doğrudan kodunuza veya GitHub'a pushlanan dosyalara eklemeyin!
+- **API anahtarlarınızı asla doğrudan kodun içine yazmayın!** Bunun yerine daima `.env` dosyasını kullanın.
+- API anahtarlarınızı github veya başka bir repoya asla pushlamayın.
+- `.env` dosyası `.gitignore` içinde listelenmeli ve git tarafından izlenmemelidir.
+- Hassas bilgileri kodun içine açık metinde yazmak, bu bilgilerin kazara halka açık repolarda paylaşılmasına ve yetkisiz erişime neden olabilir.
 
 ## Uygulamayı Çalıştırma
 
