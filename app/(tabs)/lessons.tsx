@@ -35,8 +35,8 @@ const VOCABULARY_CATEGORIES = [
 ];
 
 // Gemini API için bilgiler
-// .env dosyasından API anahtarını al ya da doğrudan ekle
-const GEMINI_API_KEY = "AIzaSyBEiYOhkNeU6aQbZz0VGFb06dB4k-vgPiw"; // İşlemleri hızlandırmak için doğrudan ekledik
+// .env dosyasından API anahtarını al
+const GEMINI_API_KEY = Constants.expoConfig?.extra?.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
 const GEMINI_API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
 
 // Kategori bazlı örnek veri

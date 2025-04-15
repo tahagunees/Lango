@@ -75,8 +75,14 @@ npx expo start
 
 ## Ortam Değişkenleri
 
-Proje kök dizininde bir `.env` dosyası oluşturun ve aşağıdaki değişkenleri ekleyin:
+Projede API anahtarları ve hassas bilgiler için `.env` dosyası kullanılmaktadır. Güvenlik için:
 
+1. Repo'da bulunan `.env.example` dosyasını `.env` olarak kopyalayın:
+```bash
+cp .env.example .env
+```
+
+2. `.env` dosyasındaki anahtarları kendi API anahtarlarınızla değiştirin:
 ```
 # Gemini AI API anahtarı
 GEMINI_API_KEY=your_api_key_here
@@ -89,6 +95,10 @@ FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
 FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
 FIREBASE_APP_ID=your_firebase_app_id
 ```
+
+3. `.env` dosyası `.gitignore`'a eklenmiştir, böylece API anahtarlarınız yanlışlıkla repo'ya gönderilmez.
+
+> ⚠️ **Güvenlik Uyarısı**: API anahtarlarınızı asla doğrudan kodunuza veya GitHub'a pushlanan dosyalara eklemeyin!
 
 ## Uygulamayı Çalıştırma
 
@@ -122,8 +132,6 @@ lango/
 - [ ] Topluluk özellikleri ve arkadaş ekleme
 - [ ] Günlük hatırlatıcılar ve bildirimler
 - [ ] Gelişmiş AI özelleştirmesi
-
-
 
 ## Lisans
 
